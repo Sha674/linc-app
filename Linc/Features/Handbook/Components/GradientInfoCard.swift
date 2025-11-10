@@ -9,41 +9,48 @@
 import SwiftUI
 
 struct GradientInfoCard: View {
-    var title: String
-    var subtitle: String
-    var symbol: String
-    
+    // 👇 Declare the inputs your card needs
+    let title: String
+    let subtitle: String
+    let symbol: String
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(.white.opacity(0.25))
-                    .frame(width: 44, height: 44)
-                Image(systemName: symbol)
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.white)
-            }
+            // Icon
+            Image(systemName: symbol)
+                .font(.system(size: 32))
+                .foregroundStyle(
+                    LinearGradient(colors: [.blue, .purple],
+                                   startPoint: .topLeading,
+                                   endPoint: .bottomTrailing)
+                )
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(Color.white))
+                .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 3)
+
+            // Texts
             VStack(alignment: .leading, spacing: 6) {
+                // Gradient-styled title (blue→purple)
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .font(.headline)
+                    .foregroundStyle(
+                        LinearGradient(colors: [.blue, .purple],
+                                       startPoint: .leading,
+                                       endPoint: .trailing)
+                    )
+
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.95))
+                    .foregroundColor(.black.opacity(0.7))
             }
-            Spacer(minLength: 0)
+
+            Spacer()
         }
-        .padding(16)
-        .frame(maxWidth: .infinity)
+        .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(LinearGradient(colors: [.blue, .purple],
-                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.white)
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .stroke(.white.opacity(0.08), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
     }
 }
