@@ -28,79 +28,73 @@ struct HandbookHomeView: View {
     private var completed: Int { items.filter { $0.state == .read }.count }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: -50) {
-                    VStack {
-                        // Large heading
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Know Better, Care with")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundStyle(LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color("gradientStart"),
-                                        Color("gradientEnd")
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                            Text("Confidence")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundStyle(LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color("gradientStart"),
-                                        Color("gradientEnd")
-                                    ]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                        }
-                        
-                        .padding(.horizontal,10)
-                        .padding(.top, 12)
-                        
-                        // Gradient tip card
-                        GradientInfoCard(
-                            title: "How medicine A supports the heart",
-                            subtitle: "Skipping doses may cause fatigue or shortness of breath.",
-                            symbol: "pills"
-                        )
-                        .padding(.horizontal, 16)
+        ScrollView {
+            VStack(spacing: -50) {
+                VStack {
+                    // Large heading
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Know Better, Care with")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundStyle(LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color("gradientStart"),
+                                    Color("gradientEnd")
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                        Text("Confidence")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundStyle(LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color("gradientStart"),
+                                    Color("gradientEnd")
+                                ]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
                     }
-                    .padding(.vertical, 60)
-                    .background(Color.white)
                     
+                    .padding(.horizontal,10)
+                    .padding(.top, 12)
                     
-                    // Section + list
-                    VStack(spacing: -130) {
-                        SectionHeader(
-                            title: "Why this care matters?",
-                            counterText: "\(completed)/\(items.count)"
-                        )
-                        .padding(.vertical, -175)
-                        .padding(.horizontal, 10)
-                        
-                        VStack(spacing: 15) {
-                            ForEach(items.indices, id: \.self) { idx in
-                                KnowledgeRow(item: items[idx]) {
-                                    markRead(at: idx)
-                                }
-                                .padding(.horizontal, 10)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 200)
-                    .background(Color(.systemGroupedBackground))
-                    .padding(.top, 10)
+                    // Gradient tip card
+                    GradientInfoCard(
+                        title: "How medicine A supports the heart",
+                        subtitle: "Skipping doses may cause fatigue or shortness of breath.",
+                        symbol: "pills"
+                    )
+                    .padding(.horizontal, 16)
                 }
+                .padding(.vertical, 60)
+                .background(Color.white)
                 
+                
+                // Section + list
+                VStack(spacing: -130) {
+                    SectionHeader(
+                        title: "Why this care matters?",
+                        counterText: "\(completed)/\(items.count)"
+                    )
+                    .padding(.vertical, -175)
+                    .padding(.horizontal, 10)
+                    
+                    VStack(spacing: 15) {
+                        ForEach(items.indices, id: \.self) { idx in
+                            KnowledgeRow(item: items[idx]) {
+                                markRead(at: idx)
+                            }
+                            .padding(.horizontal, 10)
+                        }
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 200)
+                .background(Color(.systemGroupedBackground))
+                .padding(.top, 10)
             }
-            
-            .navigationTitle("Handbook")
-            .navigationBarTitleDisplayMode(.inline)
-            .ignoresSafeArea()
         }
+        .ignoresSafeArea()
     }
     
     private func markRead(at index: Int) {
@@ -111,23 +105,11 @@ struct HandbookHomeView: View {
     }
 }
 #Preview("Handbook – Light") {
-    NavigationStack {
-        TabView {
-            // Mock Home tab (placeholder)
-            Text("Home")
-                .tabItem { Label("Home", systemImage: "house") }
-
-            // Your real Handbook screen
-            HandbookHomeView()
-                .tabItem { Label("Handbook", systemImage: "book") }
-        }
-    }
-    .environment(\.colorScheme, .light)
+    HandbookHomeView()
+        .environment(\.colorScheme, .light)
 }
 
 #Preview("Handbook – Dark") {
-    NavigationStack {
-        HandbookHomeView()
-    }
-    .environment(\.colorScheme, .dark)
+    HandbookHomeView()
+        .environment(\.colorScheme, .dark)
 }
