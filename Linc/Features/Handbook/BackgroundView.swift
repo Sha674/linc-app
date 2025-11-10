@@ -7,9 +7,28 @@
 
 import SwiftUI
 
+let backgrounColor = Color.primary100
+
 struct BackgroundView: View {
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack (alignment: .topLeading){
+            backgrounColor.ignoresSafeArea()
+            // Outer circle
+            Circle()
+                .fill(Color.primary200) // background color
+                .opacity(0.5)
+                .frame(width: 450, height: 450)
+                .offset(x: -150, y: -150)
+            
+            // Inner ellipse
+            Circle()
+                .fill(Color.primary300)
+                .opacity(0.5)
+                .frame(width: 323.78, height: 323.78)
+                .offset(x: -100, y: -100)
+        }
+        
     }
 }
 
