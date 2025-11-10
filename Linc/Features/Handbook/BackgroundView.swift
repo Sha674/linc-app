@@ -13,7 +13,7 @@ struct BackgroundView: View {
     
     var body: some View {
         ZStack (alignment: .topLeading){
-            backgrounColor.ignoresSafeArea()
+            backgrounColor
             // Outer circle
             Circle()
                 .fill(Color.primary200) // background color
@@ -27,7 +27,7 @@ struct BackgroundView: View {
                 .opacity(0.5)
                 .frame(width: 323.78, height: 323.78)
                 .offset(x: -100, y: -100)
-        }
+        }.ignoresSafeArea()
         
     }
 }
