@@ -1,16 +1,12 @@
 import SwiftUI
 
 struct TaskCardView: View {
-    let title: String
-    let time: String
-    let note: String
-    let iconName: String
-    @State private var isChecked: Bool = false
+    @Binding var task: TaskItem
 
     var body: some View {
         HStack(spacing: 16) {
             // Checkbox
-            Button(action: { isChecked.toggle() }) {
+            Button(action: { task.isCompleted.toggle() }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color(.systemGray6))
@@ -20,7 +16,7 @@ struct TaskCardView: View {
                                 .stroke(Color(.systemGray3), lineWidth: 0.8)
                         )
 
-                    if isChecked {
+                    if task.isCompleted {
                         Image(systemName: "checkmark")
                             .font(.system(size: 12, weight: .bold))
                             .foregroundColor(.white)
@@ -35,13 +31,14 @@ struct TaskCardView: View {
 
             // Task details
             VStack(alignment: .leading, spacing: 8) {
-                Text(title)
+                Text(task.title)
                     .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.primary)
+                    .foregroundColor(task.isCompleted ? .secondary : .primary)
+                    .strikethrough(task.isCompleted)
                     .lineLimit(1)
 
                 HStack(spacing: 6) {
-                    Text(time)
+                    Text(task.time)
                         .font(.system(size: 16))
                         .foregroundColor(.secondary)
 
@@ -49,7 +46,7 @@ struct TaskCardView: View {
                         .fill(Color(.systemGray4))
                         .frame(width: 6, height: 6)
 
-                    Text(note)
+                    Text(task.note)
                         .font(.system(size: 16))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -58,8 +55,7 @@ struct TaskCardView: View {
 
             Spacer()
 
-            // Right-side icon
-            Image(iconName)
+            Image(task.icon)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 32, height: 32)
@@ -67,30 +63,19 @@ struct TaskCardView: View {
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 16)
-        .background(Color(.systemBackground))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(.systemGray5), lineWidth: 0.8)
-        )
-        .cornerRadius(12)
+    }
+}
+
+private struct TaskCardView_PreviewWrapper: View {
+    @State private var example = TaskItem(title: "Check Morning Weight", time: "8:15 AM", note: "Before breakfast", icon: "weight")
+
+    var body: some View {
+        TaskCardView(task: $example)
+            .padding()
+            .background(Color(.systemGroupedBackground))
     }
 }
 
 #Preview {
-    VStack(spacing: 12) {
-        TaskCardView(
-            title: "Check Morning Weight",
-            time: "8:15 AM",
-            note: "Before breakfast",
-            iconName: "weight"
-        )
-        TaskCardView(
-            title: "Prepare Low-Salt Breakfast",
-            time: "8:30 AM",
-            note: "Ensure fluid ≤ 250 ml",
-            iconName: "cooking"
-        )
-    }
-    .padding()
-    .background(Color(.systemGroupedBackground))
+    TaskCardView_PreviewWrapper()
 }
