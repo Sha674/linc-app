@@ -23,6 +23,8 @@ struct SectionHeader: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
                 .background(Capsule().fill(Color(.systemGray6)))
+            
+            
         }
     }
 }
