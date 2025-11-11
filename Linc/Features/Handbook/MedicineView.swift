@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct MedicineView: View {
     struct SectionData: Identifiable {
         let id = UUID()
@@ -34,20 +33,14 @@ struct MedicineView: View {
     let subtitle:String
     let goalContent: String
     
+    // Callback to notify parent when user confirms
+    var onConfirm: (() -> Void)? = nil
+    
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack{
             BackgroundView()
-//            ZStack(alignment: .topLeading){
-//                Button(action: exit){
-//                    Image(systemName: "xmark")
-//                        .foregroundStyle(Color.primary700)
-//                        .font(.largeTitle.bold())
-//                    
-//                }
-//                .padding(.horizontal)
-//                .padding(.top,20)
-//            }
             VStack(){
                 ScrollView(showsIndicators: false){
                     VStack(spacing:24){
@@ -83,8 +76,16 @@ struct MedicineView: View {
                     .padding(.horizontal,24)
                     .padding(.bottom, 100)
                 }
-                BottomBarView()
-                    .frame(height: 100)
+                BottomBarView(
+                    onLearnMore: {
+                        // optional: handle learn more
+                    },
+                    onConfirm: {
+                        onConfirm?()
+                        dismiss()
+                    }
+                )
+                .frame(height: 100)
                 
             }
             .ignoresSafeArea()
@@ -101,19 +102,16 @@ struct MedicineView: View {
                 }
                 Spacer()
             }
-            
         }
     }
 }
-    
-    
-    
-    func exit() {
-        
-    }
 
+func exit() { }
 
 #Preview {
-    MedicineView(mainTitle: "How medicine “A” supports the heart", subtitle: "Skipping doses may cause fatigue or shortness of breath.", goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse.")
+    MedicineView(
+        mainTitle: "How medicine “A” supports the heart",
+        subtitle: "Skipping doses may cause fatigue or shortness of breath.",
+        goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse."
+    )
 }
-

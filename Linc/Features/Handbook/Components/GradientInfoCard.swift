@@ -4,53 +4,71 @@
 //
 //  Created by UTSMac06 on 10/11/2025.
 //
-//  The The card at the top with: gradient background, icon, title, subtitle
+//  Updated to match Figma style using system fonts and brand colors.
+//
 
 import SwiftUI
 
 struct GradientInfoCard: View {
-    // 👇 Declare the inputs your card needs
     let title: String
     let subtitle: String
-    let symbol: String
+    let imageName: String?
+
+    init(title: String, subtitle: String, imageName: String?) {
+        self.title = title
+        self.subtitle = subtitle
+        self.imageName = imageName
+    }
+
+    init(title: String, subtitle: String, symbol: String?) {
+        self.title = title
+        self.subtitle = subtitle
+        self.imageName = symbol
+    }
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            // Icon
-            Image(systemName: symbol)
-                .font(.system(size: 32))
-                .foregroundStyle(
-                    LinearGradient(colors: [.blue, .purple],
-                                   startPoint: .topLeading,
-                                   endPoint: .bottomTrailing)
-                )
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(Color.white))
-                .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 3)
+        HStack(spacing: 24) {
+            // 48x48 icon container
+            ZStack {
+                if let imageName, !imageName.isEmpty {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 48, height: 48)
+                        .clipped()
+                        .accessibilityHidden(true)
+                }
+            }
+            .frame(width: 48, height: 48)
 
-            // Texts
-            VStack(alignment: .leading, spacing: 6) {
-                // Gradient-styled title (blue→purple)
+            VStack(alignment: .leading, spacing: 12) {
                 Text(title)
-                    .font(.headline)
-                    .foregroundStyle(
-                        LinearGradient(colors: [.blue, .purple],
-                                       startPoint: .leading,
-                                       endPoint: .trailing)
-                    )
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color.primary700)
+                    .multilineTextAlignment(.leading)
 
                 Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(.black.opacity(0.7))
+                    .font(.system(size: 18))
+                    .foregroundColor(Color.black.opacity(0.7))
+                    .multilineTextAlignment(.leading)
             }
-
-            Spacer()
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.white)
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        // Increase horizontal padding so text has more room to wrap
+        .padding(EdgeInsets(top: 16, leading: 24, bottom: 20, trailing: 24))
+        .background(Color.white)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.primary300, lineWidth: 0.5)
         )
+        .shadow(color: Color.black.opacity(0.06), radius: 9.7, y: 1)
     }
+}
+
+#Preview("GradientInfoCard – Light") {
+    GradientInfoCard(
+        title: "How medicine A supports the heart",
+        subtitle: "Skipping doses may cause fatigue or shortness of breath.",
+        imageName: "medicine2"
+    )
 }
