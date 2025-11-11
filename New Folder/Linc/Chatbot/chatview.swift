@@ -150,7 +150,6 @@ struct ChatBubble: View {
             if message.isUser {
                 Spacer()
             }
-            
             Text(message.text)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 14)
@@ -164,7 +163,7 @@ struct ChatBubble: View {
                         endPoint: .trailing
                     )
                 )
-                .foregroundColor(message.isUser ? .white : .primary)
+                .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .frame(
                     maxWidth: availableWidth > 0 ? availableWidth * 0.7 : .infinity,
