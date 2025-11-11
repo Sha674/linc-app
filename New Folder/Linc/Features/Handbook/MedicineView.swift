@@ -91,12 +91,12 @@ struct MedicineView: View {
             .ignoresSafeArea()
             VStack {
                 HStack {
-                    Button(action: exit) {
+                    Button(action: {onConfirm?()}) {
                         Image(systemName: "xmark")
                             .foregroundStyle(Color.primary700)
                             .font(.largeTitle.bold())
                     }
-                    .padding(.horizontal,40)
+                    .padding(.horizontal,20)
                     .padding(.top,10)
                     Spacer()
                 }
