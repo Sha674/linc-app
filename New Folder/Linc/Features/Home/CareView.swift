@@ -12,47 +12,39 @@ struct CareView: View {
     @State private var afternoonTasks = [
         TaskItem(title: "Support Light Walk", time: "2:00 PM", note: "15–20 mins", icon: "walk"),
         TaskItem(title: "Check Blood Pressure", time: "3:30 PM", note: "Record in app", icon: "blood"),
-        TaskItem(title: "Support Light Walk", time: "2:00 PM", note: "15–20 mins", icon: "walk"),
-        TaskItem(title: "Check Blood Pressure", time: "3:30 PM", note: "Record in app", icon: "blood")
+    ]
+    
+    @State private var eveningTasks = [
+        TaskItem(title: "Weigh Before Dinner", time: "6:40 PM", note: "Track daily change", icon: "weight"),
+        TaskItem(title: "Administer Evening Medication", time: "8:30 PM", note: "2 tablets", icon: "medicine"),
     ]
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.primary100.ignoresSafeArea()
+            // Do not put BackgroundView as a child here
+            VStack(spacing: 0) {
+                HeaderView(scrollOffset: 0)
+                    .background(.clear)
 
-            ScrollView {
-                // Đo offset trong không gian tọa độ của ScrollView
-                GeometryReader { geo in
-                    Color.clear
-                        .preference(
-                            key: ScrollOffsetPreferenceKey.self,
-                            value: geo.frame(in: .named("scroll")).minY
-                        )
-                }
-                .frame(height: 0)
+                InsightBannerView()
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
 
-                VStack(spacing: 24) {
-                    InsightBannerView()
+                GeometryReader { proxy in
+                    let availableHeight = proxy.size.height
                     TaskGroupView(sections: [
                         TaskSectionData(title: "Morning", progress: "0/\(morningTasks.count)", tasks: morningTasks),
-                        TaskSectionData(title: "Afternoon", progress: "0/\(afternoonTasks.count)", tasks: afternoonTasks)
-                    ])
+                        TaskSectionData(title: "Afternoon", progress: "0/\(afternoonTasks.count)", tasks: afternoonTasks),
+                        TaskSectionData(title: "Evening", progress: "0/\(eveningTasks.count)", tasks: eveningTasks)
+                    ], maxHeight: availableHeight)
+                    .padding(.top, 8)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
                 }
-                .padding(.top, 70)
             }
-//            .coordinateSpace(name: "scroll")
-//            // Nếu cần chừa 16pt để không dính sát mép dưới, dùng safeAreaInset thay vì padding nội dung
-//            .safeAreaInset(edge: .bottom) {
-//                Color.clear.frame(height: 16)
-//            }
-
-            HeaderView(scrollOffset: scrollOffset)
-                .background(.primary100)
         }
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-            // Khi cuộn xuống, minY âm => offset dương
-            scrollOffset = -value
-        }
+        // Attach background to ZStack, not as a child layer
+        .background(BackgroundView())
     }
 }
 
