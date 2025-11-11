@@ -7,12 +7,15 @@
 
 import SwiftUI
 
+struct BottomBarView: View {
+    // Optional callbacks for actions
+    var onLearnMore: (() -> Void)?
+    var onConfirm: (() -> Void)?
 
-struct BottomBarView:View {
     var body: some View {
         HStack() {
             Button(action: {
-                print("tapped")
+                onLearnMore?()
             }) {
                 Link("Find out more", destination: URL(string: "https://www.apple.com")!)
                     .font(.system(size: 16, weight: .semibold))
@@ -21,18 +24,10 @@ struct BottomBarView:View {
                     .padding()
                     .background(Color.primary200)
                     .cornerRadius(100)
-                
-//                    Text("Find out more")
-//                        .font(.system(size: 16, weight: .semibold))
-//                        .foregroundColor(.black)
-//                        .frame(width: 150, height: 30)
-//                        .padding()
-//                        .background(Color.primary200)
-//                        .cornerRadius(100)
             }
             
             Button(action: {
-                print("tapped")
+                onConfirm?()
             }) {
                 Text("Got that!")
                     .font(.system(size: 16, weight: .semibold))

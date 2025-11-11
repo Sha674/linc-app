@@ -14,5 +14,6 @@ final class AppState: ObservableObject {
         case awaitingCode(sessionId: String, who: String)
         case loggedIn
     }
+    var name: String = "Linc"
     @Published var auth: Auth = .loggedOut
 }
