@@ -19,43 +19,42 @@ struct KeyInfoView: View {
     let item: ActionItem
 
     var body: some View {
-        GeometryReader { geometry in
-            let size = geometry.size.width // ensures square shape
-            
-            VStack(alignment: .leading, spacing: 12) {
-                // icon in the top-left
-                ZStack(){
-                    Image(item.symbol)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 35, height: 35)
-                        .foregroundColor(.primary300)
-                    //                .background(Color.clear)
-                    //                .cornerRadius(10)
-                }
-                // Title and subtitle
-                VStack(alignment: .leading, spacing: 4){
-                    Text(item.title)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
-                        .fixedSize(horizontal: false, vertical: true) // allow multiline
-                    
-                    Text(item.subtitle)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                }
+        
+        VStack(alignment: .leading, spacing: 12) {
+            // icon in the top-left
+            ZStack(){
+                Image(item.symbol)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(.primary300)
+                //                .background(Color.clear)
+                //                .cornerRadius(10)
             }
-            .padding(12)
-            .frame(width: size, height: size)
-            .background(.white)
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.primary300, lineWidth: 0.5)
-            )
-            .shadow(color: Color.black.opacity(0.02), radius: 1, x: 0, y: 1)
+            // Title and subtitle
+            VStack(alignment: .leading, spacing: 4){
+                Text(item.title)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true) // allow multiline
+                
+                Text(item.subtitle)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+            }
         }
-        .aspectRatio(1, contentMode: .fit)
+        .padding(12)
+//        .padding(.vertical, 12)
+//        .padding(.horizontal, 10)
+//        .frame(width: 170, height: 170)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.white)
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.primary300, lineWidth: 0.5)
+        )
+        .shadow(color: Color.black.opacity(0.02), radius: 1, x: 0, y: 1)
     }
 }
 
@@ -85,7 +84,7 @@ struct KeyInfoGridView: View {
                     KeyInfoView(item: item)
                 }
             }
-            .padding(.horizontal, 15)
+            .padding(.horizontal, 20)
         }
         .padding(.vertical, 15)
     }
@@ -94,19 +93,3 @@ struct KeyInfoGridView: View {
 #Preview(){
     KeyInfoGridView()
 }
-// Example sample data and preview
-//struct ActionGridView_Previews: PreviewProvider {
-//    static let sample = [
-//        ActionItem(symbol: "home", title: "Mom got home safely", subtitle: "Got home at 15:30"),
-//        ActionItem(symbol: "document", title: "Store discharge papers", subtitle: "Keep for doctor visit"),
-//        ActionItem(symbol: "phonebook", title: "Save doctor's number", subtitle: "04-5734-3523"),
-//        ActionItem(symbol: "home-1", title: "Phone nearby", subtitle: "Emergency numbers visible")
-//    ]
-//
-//    static var previews: some View {
-//        Group {
-//            KeyInfoGridView(items: sample)
-//                .previewDevice("iPhone 14")
-//        }
-//    }
-//}

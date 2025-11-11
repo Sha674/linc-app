@@ -12,15 +12,15 @@ struct InsightsView: View {
         ZStack(alignment: .top){
             BackgroundView()
             VStack{
-                TopBarView().padding(.horizontal)
+                TopBarView()
                 ScrollView{
                     VStack(spacing: 24){
-                        BannerView(name:"Margaret Chen", days:"Day 1, Hour 1").padding(.horizontal)
-                        KeyInfoGridView().padding(.horizontal)
+                        BannerView(name:"Margaret Chen", days:"Day 1, Hour 1")
+                        KeyInfoGridView()
                         AlertView()
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
+                    .padding(.vertical, 20)
                 }
             }
         }
