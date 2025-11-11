@@ -7,7 +7,6 @@
 //
 import SwiftUI
 
-// --- Custom Button Style to match the purple "Save" button ---
 struct SaveButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         
@@ -34,7 +33,6 @@ struct SaveButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == SaveButtonStyle {
     static var saveButton: SaveButtonStyle { .init() }
 }
-// ---
 
 struct Taskdetailisview: View {
     @StateObject var viewModel: TaskViewModel
@@ -81,7 +79,7 @@ struct Taskdetailisview: View {
             
             // Save Button
             Button("Save") {
-                // In a real app, you would send viewModel.loggedValue to your server
+            
                 print("Saving value: \(viewModel.loggedValue) \(viewModel.task.unit)")
                 isPresented = false
             }
@@ -96,7 +94,6 @@ struct Taskdetailisview: View {
     }
 }
 
-// --- Sub-View 1: The Weight Check Block ---
 struct TaskInfoBlock: View {
     let task: HealthTask
 
@@ -105,7 +102,7 @@ struct TaskInfoBlock: View {
 
             // TITLE + ICON
             HStack(alignment: .center) {
-                Text(task.title)                 // "Check Morning Weight"
+                Text(task.title)     // "Check Morning Weight"
                     .font(.system(size: 23, weight: .semibold))
                     .foregroundColor(Color(.label))
 
@@ -125,9 +122,9 @@ struct TaskInfoBlock: View {
 
             // TIME PILL: "8:15 AM • Before breakfast."
             HStack(spacing: 6) {
-                Text(task.time)                    // "8:15 AM"
+                Text(task.time)              // "8:15 AM"
                 Text("•")
-                Text(task.instruction)             // "Before breakfast."
+                Text(task.instruction)       // "Before breakfast."
             }
             .font(.system(size: 16, weight: .medium))
             .foregroundColor(Color(red: 0.43, green: 0.45, blue: 0.57))
@@ -138,7 +135,7 @@ struct TaskInfoBlock: View {
                     .fill(Color(red: 0.93, green: 0.94, blue: 1.0))  // light purple pill
             )
 
-            // DESCRIPTION TEXT (NOT RED ANYMORE)
+    
             Text(task.context)
                 .font(.system(size: 15))
                 .foregroundColor(Color(red: 0.21, green: 0.24, blue: 0.34)) // dark grey
@@ -152,7 +149,6 @@ struct TaskInfoBlock: View {
 }
 
 
-// --- Sub-View 2: The Call Doctor Warning Block ---
 struct WarningBlock: View {
     let warningThreshold: String   // e.g. "+2 kg in 2 days"
 
@@ -181,7 +177,6 @@ struct WarningBlock: View {
 }
 
 
-// --- Sub-View 3: The Log Input ---
 struct LogInputBlock: View {
     @Binding var loggedValue: String
     let unit: String
@@ -222,7 +217,6 @@ struct LogInputBlock: View {
 
 
 #Preview {
-    // Create state variables needed for the view
     @Previewable @State var isShowing: Bool = true
         
     // Create the required view model
