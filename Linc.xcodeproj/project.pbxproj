@@ -11,9 +11,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0D5A0F192EBD6BBD00D89E1A /* Linc */ = {
+		285BF63C2EC2A35500D1EF32 /* New Folder */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Linc;
+			path = "New Folder";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		0D5A0F0E2EBD6BBD00D89E1A = {
 			isa = PBXGroup;
 			children = (
-				0D5A0F192EBD6BBD00D89E1A /* Linc */,
+				285BF63C2EC2A35500D1EF32 /* New Folder */,
 				0D5A0F182EBD6BBD00D89E1A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0D5A0F192EBD6BBD00D89E1A /* Linc */,
+				285BF63C2EC2A35500D1EF32 /* New Folder */,
 			);
 			name = Linc;
 			packageProductDependencies = (
