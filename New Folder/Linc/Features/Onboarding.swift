@@ -51,6 +51,8 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             BackgroundViewV2()
+                .ignoresSafeArea() // phủ full màn hình
+
             TabView(selection: $currentPage) {
                 LoginPage(currentPage: $currentPage)
                     .tag(0)
@@ -64,7 +66,9 @@ struct OnboardingView: View {
                     .tag(4)
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .ignoresSafeArea() // để TabView không “cắt” safe area
         }
+        .ignoresSafeArea() // bảo đảm ZStack cũng bỏ qua safe area
     }
 }
 
@@ -162,6 +166,7 @@ struct MomsHerePage: View {
     var body: some View {
         ZStack {
             BackgroundView()
+                .ignoresSafeArea() // phủ full màn hình
             VStack(spacing: 16) {
                 Text("🏠")
                     .font(.system(size: 100))
@@ -202,6 +207,7 @@ struct YouCanDoThisPage: View {
     var body: some View {
         ZStack {
             BackgroundView()
+                .ignoresSafeArea()
             VStack(spacing: 16) {
                 Text("✅")
                     .font(.system(size: 100))
@@ -242,6 +248,7 @@ struct JustThreeThingsPage: View {
     var body: some View {
         ZStack {
             BackgroundView()
+                .ignoresSafeArea()
             VStack(spacing: 16) {
                 Text("💡")
                     .font(.system(size: 100))
@@ -292,6 +299,7 @@ struct WhyThisWorksPage: View {
     var body: some View {
         ZStack {
             BackgroundView()
+                .ignoresSafeArea()
             VStack(spacing: 16) {
                 Text("3️⃣")
                     .font(.system(size: 100))
