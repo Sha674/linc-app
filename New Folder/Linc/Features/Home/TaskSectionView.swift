@@ -4,6 +4,9 @@ struct TaskSectionView: View {
     let title: String
     @Binding var tasks: [TaskItem]
 
+    var onToggle: ((Int) -> Void)?
+    var onCardTap: ((Int) -> Void)?
+
     private var progressText: String {
         let remaining = tasks.filter { !$0.isCompleted }.count
         return "\(remaining)/\(tasks.count)"
@@ -30,10 +33,14 @@ struct TaskSectionView: View {
 
             // MARK: Task list
             VStack(alignment: .leading, spacing: 0) {
-                ForEach($tasks) { $task in
-                    TaskCardView(task: $task)
+                ForEach(tasks.indices, id: \.self) { idx in
+                    TaskCardView(
+                        task: $tasks[idx],
+                        onToggle: { onToggle?(idx) },
+                        onCardTap: { onCardTap?(idx) }
+                    )
 
-                    if task.id != tasks.last?.id {
+                    if tasks[idx].id != tasks.last?.id {
                         Divider()
                             .background(Color.primary50)
                     }
@@ -58,9 +65,14 @@ private struct TaskSectionView_PreviewWrapper: View {
     ]
 
     var body: some View {
-        TaskSectionView(title: "Morning", tasks: $tasks)
-            .padding()
-            .background(Color(.systemGroupedBackground))
+        TaskSectionView(
+            title: "Morning",
+            tasks: $tasks,
+            onToggle: { idx in tasks[idx].isCompleted.toggle() },
+            onCardTap: { _ in }
+        )
+        .padding()
+        .background(Color(.systemGroupedBackground))
     }
 }
 

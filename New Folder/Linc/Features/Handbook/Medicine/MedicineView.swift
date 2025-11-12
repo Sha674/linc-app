@@ -38,6 +38,8 @@ struct MedicineView: View {
     
     @Environment(\.dismiss) private var dismiss
     
+    @Binding var showTabView: Bool
+    
     var body: some View {
         ZStack{
             BackgroundView()
@@ -86,19 +88,14 @@ struct MedicineView: View {
                 
             }
             .ignoresSafeArea()
-//            VStack {
-//                HStack {
-//                    Button(action: {onConfirm?()}) {
-//                        Image(systemName: "xmark")
-//                            .foregroundStyle(Color.primary700)
-//                            .font(.largeTitle.bold())
-//                    }
-//                    .padding(.horizontal,20)
-//                    .padding(.top,10)
-//                    Spacer()
-//                }
-//                Spacer()
-//            }
+        }
+        .onAppear {
+            // Ẩn Tab Bar khi vào màn chi tiết
+            showTabView = false
+        }
+        .onDisappear {
+            // Khôi phục Tab Bar khi rời màn chi tiết
+            showTabView = true
         }
     }
 }
@@ -109,6 +106,7 @@ func exit() { }
     MedicineView(
         mainTitle: "How medicine “A” supports the heart",
         subtitle: "Skipping doses may cause fatigue or shortness of breath.",
-        goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse."
+        goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse.",
+        showTabView: .constant(false)
     )
 }

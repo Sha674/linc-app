@@ -8,25 +8,38 @@
 import SwiftUI
 
 struct TopBarView: View {
+    var onBack: (() -> Void)? = nil
+
     var body: some View {
-        HStack() {
-            HStack(spacing: 4) {
-                HStack(spacing: 11) {
-                    Button(action: exit) {
-                        Image(systemName: "chevron.left")
-                            .foregroundStyle(Color.black)
-                            .font(.system(size: 18, weight: .bold))
-                    }.frame(width: 24, height: 24)
+        HStack {
+            // Left: Back arrow + title
+            HStack(spacing: 8) {
+                // Back button with minimum 44x44 hit area
+                Button(action: { onBack?() }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(Color.black)
+                        .font(.system(size: 18, weight: .bold))
+                        .frame(width: 18, height: 18, alignment: .center)
+                        .contentShape(Rectangle())
                 }
-                .padding(.horizontal,5)
+                // Ensure at least 44x44 tappable area
+                .frame(width: 44, height: 44, alignment: .center)
+
                 Text("24 Hours Checklist ")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.black)
+                    .lineLimit(1)
             }
+
             Spacer()
-            
+
+            // Right: Call button
             HStack(spacing: 8) {
-                Image("call").frame(width: 24, height: 24)
+                Image("call")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+
                 Text("Call 000")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(Color(red: 1, green: 0.22, blue: 0.24))
@@ -36,18 +49,13 @@ struct TopBarView: View {
             .cornerRadius(8)
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
         .frame(maxWidth: .infinity)
-        .frame(height: 50)
+        // Increase header height to provide comfortable space
+        .frame(height: 56) // was 50
         .background(.white)
-//        .overlay(
-//            Rectangle()
-//                .inset(by: 0.50)
-//                .stroke(Color(red: 0.88, green: 0.89, blue: 0.92), lineWidth: 0.50)
-//        )
     }
 }
-
 
 #Preview {
     TopBarView()

@@ -17,14 +17,14 @@ struct HandbookHomeView: View {
     
     ]
     
+    @Binding var showTabView: Bool
+    
     private var totalCount: Int { items.count }
     private var unreadCount: Int { items.filter { $0.state == .unread }.count }
     private var readCount: Int { totalCount - unreadCount }
     
     var body: some View {
         NavigationStack {
-            
-            
             ScrollView {
                 VStack(spacing: -50) {
                     // Header frame covering both title and tip card
@@ -75,7 +75,8 @@ struct HandbookHomeView: View {
                             NavigationLink(destination: MedicineView(
                                 mainTitle: "How medicine “A” supports the heart",
                                 subtitle: "Skipping doses may cause fatigue or shortness of breath.",
-                                goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse."
+                                goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse.",
+                                showTabView: $showTabView
                             )) {
                                 // Gradient tip card
                                 GradientInfoCard(
@@ -139,6 +140,9 @@ struct HandbookHomeView: View {
             .scrollIndicators(.hidden) // Ẩn thanh scroll indicator
             .ignoresSafeArea()
         }
+        .onAppear {
+            showTabView = true
+        }
     }
     
     private func markRead(at index: Int) {
@@ -149,6 +153,6 @@ struct HandbookHomeView: View {
     }
 }
 #Preview("Handbook – Light") {
-    HandbookHomeView()
+    HandbookHomeView(showTabView: .constant(true))
         .environment(\.colorScheme, .light)
 }
