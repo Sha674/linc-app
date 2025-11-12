@@ -20,6 +20,7 @@ struct GoalView: View {
             Text(goalContent)
                 .font(.system(size: 16))
                 .foregroundColor(.black)
+                .lineSpacing(4)
             //                .padding([.horizontal, .bottom], 10)
         }
         .padding(16)

@@ -73,10 +73,7 @@ struct HandbookHomeView: View {
                             
                             //Navigate to Medicine View
                             NavigationLink(destination: MedicineView(
-                                mainTitle: "How medicine “A” supports the heart",
-                                subtitle: "Skipping doses may cause fatigue or shortness of breath.",
-                                goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse.",
-                                showTabView: $showTabView
+                                content: ContentSamples.medicineA, showTabView: .constant(false)
                             )) {
                                 // Gradient tip card
                                 GradientInfoCard(

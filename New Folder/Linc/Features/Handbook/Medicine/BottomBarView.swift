@@ -10,6 +10,7 @@ import SwiftUI
 struct BottomBarView: View {
     var onConfirm: (() -> Void)?
     @State private var showSafari = false
+    let link:String
 
     var body: some View {
         HStack() {
@@ -40,10 +41,10 @@ struct BottomBarView: View {
         .padding()
         .background(Color.primary50)
         .sheet(isPresented: $showSafari) {
-            SafariView(url: URL(string: "https://www.google.com")!)}
+            SafariView(url: URL(string: link)!)}
     }
 }
 
 #Preview {
-    BottomBarView()
+    BottomBarView(onConfirm: {}, link: "https://health.clevelandclinic.org/heart-failure-diet")
 }
