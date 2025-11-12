@@ -59,7 +59,7 @@ struct GradientButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
             .background(Color(red: 0.25, green: 0.27, blue: 0.78))
             .foregroundColor(.white)
-            .cornerRadius(8)
+            .cornerRadius(16)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
@@ -72,23 +72,33 @@ struct LoginPage: View {
     @State private var alertMessage = ""
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image("logo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .padding(.bottom, 16)
+        VStack(alignment: .center, spacing: 16) {
+            VStack{
+                Image("logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .padding(.bottom, 10)
 
-            Text("Log in")
-                .font(.largeTitle)
-                .bold()
+                Text("Log in")
+                    .font(.largeTitle)
+                    .bold()
+            }
+            .padding()
+            
 
             TextField("Email", text: $email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+                .frame(height: 50)
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
                 .padding(.horizontal)
 
             SecureField("Password", text: $password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding()
+                .frame(height: 50)
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
                 .padding(.horizontal)
 
             Button(action: {
@@ -102,6 +112,8 @@ struct LoginPage: View {
                 Text("Log In")
             }
             .buttonStyle(GradientButtonStyle())
+            .disabled(email.isEmpty || password.isEmpty)
+            .opacity((email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
             .padding(.horizontal)
             .padding(.vertical)
             .alert(isPresented: $showAlert) {
