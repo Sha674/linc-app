@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-    
+
 struct LoginView: View {
     //@EnvironmentObject var app: AppState
     var body: some View {
@@ -56,7 +56,7 @@ struct GradientButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding()
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, minHeight: 60)
             .background(Color(red: 0.25, green: 0.27, blue: 0.78))
             .foregroundColor(.white)
             .cornerRadius(16)
@@ -70,59 +70,65 @@ struct LoginPage: View {
     @State private var password = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
-
+    
     var body: some View {
-        VStack(alignment: .center, spacing: 16) {
-            VStack{
+        VStack{
+            Spacer().frame(height:40)
+            VStack(spacing: 12) {
                 Image("logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .padding(.bottom, 10)
-
+                    .frame(width: 120, height: 120)
+                
                 Text("Log in")
-                    .font(.largeTitle)
-                    .bold()
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(.primary)
             }
-            .padding()
+            .padding(.top, 60)
+            .padding(.bottom, 20)
             
-
-            TextField("Email", text: $email)
-                .padding()
-                .frame(height: 50)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .padding(.horizontal)
-
-            SecureField("Password", text: $password)
-                .padding()
-                .frame(height: 50)
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-                .padding(.horizontal)
-
-            Button(action: {
-                if (email.lowercased() == "afp@gmail.com") && password == "sebastian" {
-                    currentPage = 1
-                } else {
-                    alertMessage = "Invalid email or password. Please try again."
-                    showAlert = true
+            VStack(spacing: 20){
+                TextField("Email", text: $email)
+                    .padding()
+                    .frame(height: 60)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                    .autocapitalization(.none)
+                    .padding(.horizontal)
+                
+                SecureField("Password", text: $password)
+                    .padding()
+                    .frame(height: 60)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                
+                
+                Button(action: {
+                    if (email.lowercased() == "afp@gmail.com") && password == "sebastian" {
+                        currentPage = 1
+                    } else {
+                        alertMessage = "Invalid email or password. Please try again."
+                        showAlert = true
+                    }
+                }) {
+                    Text("Log In")
                 }
-            }) {
-                Text("Log In")
+                .buttonStyle(GradientButtonStyle())
+                .disabled(email.isEmpty || password.isEmpty)
+                .opacity((email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
+                .padding()
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                }
             }
-            .buttonStyle(GradientButtonStyle())
-            .disabled(email.isEmpty || password.isEmpty)
-            .opacity((email.isEmpty || password.isEmpty) ? 0.6 : 1.0)
-            .padding(.horizontal)
-            .padding(.vertical)
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-            }
+            Spacer()
+            
         }
         .padding()
     }
 }
+
 
 struct MomsHerePage: View {
     @Binding var currentPage: Int
