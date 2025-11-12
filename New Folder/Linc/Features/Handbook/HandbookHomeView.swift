@@ -1,28 +1,60 @@
 import SwiftUI
 
 struct HandbookHomeView: View {
-    @State private var items: [KnowledgeItem] = [
-        .init(title: "Low-Salt Breakfast",
-              excerpt: "Helps reduce swelling and shortness of breath.",
-              state: .unread,
-              symbol: "fork.knife"),
-        .init(title: "Track Fluids",
-              excerpt: "Avoids putting extra strain.",
-              state: .unread,
-              symbol: "drop.triangle"),
-        .init(title: "Daily Monitoring",
-              excerpt: "Catch early signs of fluid build-up.",
-              state: .read,
-              symbol: "stethoscope")
-    
+    // Row model to pair visible info + the content to open
+    struct HandbookRow: Identifiable, Hashable {
+        let id = UUID()
+        var item: KnowledgeItem
+        var content: ContentData?
+
+        static func == (lhs: HandbookRow, rhs: HandbookRow) -> Bool {
+            lhs.id == rhs.id
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+    }
+
+    @State private var rows: [HandbookRow] = [
+        .init(
+            item: KnowledgeItem(
+                title: "Low-Salt Breakfast",
+                excerpt: "Helps reduce swelling and shortness of breath.",
+                state: .unread,
+                symbol: "fork.knife"
+            ),
+            content: ContentSamples.lowSaltDiet
+        ),
+        .init(
+            item: KnowledgeItem(
+                title: "Track Fluids",
+                excerpt: "Avoids putting extra strain.",
+                state: .unread,
+                symbol: "drop.triangle"
+            ),
+            content: ContentSamples.trackFluids
+        ),
+        .init(
+            item: KnowledgeItem(
+                title: "Daily Monitoring",
+                excerpt: "Catch early signs of fluid build-up.",
+                state: .read,
+                symbol: "stethoscope"
+            ),
+            content: ContentSamples.dailyMonitoring
+        )
     ]
-    
+
     @Binding var showTabView: Bool
-    
-    private var totalCount: Int { items.count }
-    private var unreadCount: Int { items.filter { $0.state == .unread }.count }
+
+    // Navigation selection for pushing MedicineView
+    @State private var selectedRowID: HandbookRow.ID?
+
+    private var totalCount: Int { rows.count }
+    private var unreadCount: Int { rows.filter { $0.item.state == .unread }.count }
     private var readCount: Int { totalCount - unreadCount }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -30,7 +62,7 @@ struct HandbookHomeView: View {
                     // Header frame covering both title and tip card
                     ZStack {
                         BackgroundViewV2() // white background with circles on the right
-                        
+
                         VStack {
                             // Title split across two lines, both left-aligned
                             HStack {
@@ -51,7 +83,7 @@ struct HandbookHomeView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
-                            
+
                             HStack {
                                 Text("Care with Confidence.")
                                     .font(.system(size: 32, weight: .bold))
@@ -70,43 +102,41 @@ struct HandbookHomeView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 20)
-                            
-                            //Navigate to Medicine View
-                            NavigationLink(destination: MedicineView(
-                                content: ContentSamples.medicineA, showTabView: .constant(false)
-                            )) {
-                                // Gradient tip card
+
+                            // Tip card leading to Medicine A (example)
+                            NavigationLink(
+                                destination: MedicineView(
+                                    content: ContentSamples.medicineA,
+                                    onConfirm: { /* optional no-op */ },
+                                    showTabView: $showTabView
+                                )
+                            ) {
                                 GradientInfoCard(
-                                    title: "All about medicine A",
+                                    title: "All about Furosemide",
                                     subtitle: "Skipping doses may cause fatigue or shortness of breath.",
                                     imageName: "medicine2"
                                 )
                                 .padding(.horizontal, 16)
                             }
-                            //                        .buttonStyle(.plain)
-                            
-                            
                         }
                         .padding(.vertical, 60)
                     }
-                    // Apply bottom border and subtle shadow to the entire header block
                     .overlay(alignment: .bottom) {
                         Rectangle()
                             .fill(Color.primary100)
                             .frame(height: 0.5)
                     }
                     .shadow(color: Color.black.opacity(0.04), radius: 8, y: 3)
-                    
+
                     // Section + list
                     VStack(spacing: -120) {
-                        // Section Header (matched to TaskHeaderView style) — unread/total
                         HStack {
                             Text("Why this care matters?")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundStyle(Color(uiColor: .systemGray))
-                            
+
                             Spacer()
-                            
+
                             Text("\(unreadCount)/\(totalCount)")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(Color.primary700)
@@ -118,11 +148,12 @@ struct HandbookHomeView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
                         .padding(.top, -175)
-                        
+
                         VStack(spacing: 16) {
-                            ForEach(items.indices, id: \.self) { idx in
-                                KnowledgeRow(item: items[idx]) {
-                                    markRead(at: idx)
+                            ForEach(rows.indices, id: \.self) { idx in
+                                let row = rows[idx]
+                                KnowledgeRow(item: row.item) {
+                                    openDetail(forIndex: idx)
                                 }
                                 .padding(.horizontal, 10)
                             }
@@ -134,21 +165,51 @@ struct HandbookHomeView: View {
                     .padding(.top, 10)
                 }
             }
-            .scrollIndicators(.hidden) // Ẩn thanh scroll indicator
+            .scrollIndicators(.hidden)
             .ignoresSafeArea()
+            // Navigation destination for MedicineView
+            .navigationDestination(item: Binding<HandbookRow?>(
+                get: { selectedRowID.flatMap { id in rows.first(where: { $0.id == id }) } },
+                set: { newValue in selectedRowID = newValue?.id }
+            )) { selectedRow in
+                if let content = selectedRow.content {
+                    MedicineView(
+                        content: content,
+                        onConfirm: {
+                            // mark read and pop back
+                            markRead(byID: selectedRow.id)
+                        },
+                        showTabView: $showTabView // pass the real binding here
+                    )
+                } else {
+                    Text("No content available.")
+                        .padding()
+                }
+            }
         }
         .onAppear {
             showTabView = true
         }
     }
-    
-    private func markRead(at index: Int) {
-        guard items.indices.contains(index) else { return }
-        if items[index].state == .unread {
-            items[index].state = .read
+
+    private func openDetail(forIndex index: Int) {
+        guard rows.indices.contains(index) else { return }
+        if rows[index].content != nil {
+            selectedRowID = rows[index].id
         }
     }
+
+    private func markRead(byID id: HandbookRow.ID) {
+        if let idx = rows.firstIndex(where: { $0.id == id }) {
+            if rows[idx].item.state == .unread {
+                rows[idx].item.state = .read
+            }
+        }
+        // Pop back to HandbookHomeView
+        selectedRowID = nil
+    }
 }
+
 #Preview("Handbook – Light") {
     HandbookHomeView(showTabView: .constant(true))
         .environment(\.colorScheme, .light)

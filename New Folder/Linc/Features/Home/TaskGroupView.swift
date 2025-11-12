@@ -78,7 +78,7 @@ struct TaskSectionData {
                 progress: "2/3",
                 tasks: [
                     TaskItem(title: "Check Morning Weight", time: "8:15 AM", note: "Before breakfast", icon: "weight"),
-                    TaskItem(title: "Administer Medication A", time: "8:30 AM", note: "1 tablet", icon: "medicine"),
+                    TaskItem(title: "Administer Furosemide", time: "8:30 AM", note: "1 tablet", icon: "medicine"),
                     TaskItem(title: "Prepare Low-Salt Breakfast", time: "8:30 AM", note: "Ensure fluid ≤ 250 ml", icon: "cooking")
                 ]
             ),

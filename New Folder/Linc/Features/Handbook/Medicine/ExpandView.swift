@@ -54,7 +54,7 @@ struct ExpandView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: 0) {
-                HStack(){
+                HStack() {
                     Text(section.title)
                         .font(.system(size: 24, weight: .semibold))
                         .foregroundStyle(Color.primary700)
@@ -104,7 +104,7 @@ struct ExpandView: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                                 .padding(.leading, 4)
-                            }else {
+                            } else {
                                 Text(line)
                                     .font(.system(size: 16))
                                     .foregroundColor(.black)
@@ -114,6 +114,7 @@ struct ExpandView: View {
                             }
                         }
                     }
+                    .padding(.top, 12) // add 8pt space between title and expanded content
                     .transition(.opacity)
                 }
             }
@@ -123,29 +124,28 @@ struct ExpandView: View {
         .background(Color.primary50)
         .cornerRadius(12)
         .shadow(radius: 1)
-        
     }
 }
-    
-    // Split content into lines
-    private func parseLines(_ text: String) -> [String] {
-        text.components(separatedBy: "\n")
-    }
-    
-    // Detect numbered prefix dynamically (1., 2., 3., ...)
-    private func extractNumberPrefix(_ line: String) -> Int? {
-        let trimmed = line.trimmingCharacters(in: .whitespaces)
-        let pattern = #"^(\d+)\."#
-        if let regex = try? NSRegularExpression(pattern: pattern),
-           let match = regex.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) {
-            if let range = Range(match.range(at: 1), in: trimmed) {
-                return Int(trimmed[range])
-            }
+
+// Split content into lines
+private func parseLines(_ text: String) -> [String] {
+    text.components(separatedBy: "\n")
+}
+
+// Detect numbered prefix dynamically (1., 2., 3., ...)
+private func extractNumberPrefix(_ line: String) -> Int? {
+    let trimmed = line.trimmingCharacters(in: .whitespaces)
+    let pattern = #"^(\d+)\."#
+    if let regex = try? NSRegularExpression(pattern: pattern),
+       let match = regex.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) {
+        if let range = Range(match.range(at: 1), in: trimmed) {
+            return Int(trimmed[range])
         }
-        return nil
     }
-    
-    // Remove bullet or number prefix
+    return nil
+}
+
+// Remove bullet or number prefix
 private func removePrefix(_ line: String) -> String {
     var text = line.trimmingCharacters(in: .whitespaces)
     if text.hasPrefix("-") {
@@ -158,4 +158,3 @@ private func removePrefix(_ line: String) -> String {
     }
     return text
 }
-
