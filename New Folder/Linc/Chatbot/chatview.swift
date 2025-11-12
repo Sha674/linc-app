@@ -47,6 +47,7 @@ struct chatview: Identifiable, Hashable {
 // MARK: - View
 
 struct ChatView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ChatViewModel()
     @State private var inputText: String = ""
 
@@ -65,7 +66,7 @@ struct ChatView: View {
     var body: some View {
         VStack(spacing: 0) {
 
-            // MARK: - Header
+// MARK: - Header
             VStack(spacing: 0) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Need clarity? Just ask.")
@@ -79,21 +80,22 @@ struct ChatView: View {
                         .foregroundColor(.secondary)
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, -40) // small breathing room
+                .padding(.top, -40)                       // small breathing room
                 .background(HeaderBackground())
 
                 Divider()
                     .frame(height: 2)
-                    .background(Color(.systemGray3))
+                    .background(Color(.primary200))
                     .padding(.horizontal, -24)
             }
-            // Keep safe area inset top spacing without a button
+            //Top-safe-area
             .safeAreaInset(edge: .top) {
                 Color.clear
-                    .frame(height: 12)
+                    .frame(height: 64)
+                    .background(Color.clear)
             }
 
-            // MARK: - Messages list
+// MARK: - Messages list
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 12) {
@@ -105,7 +107,9 @@ struct ChatView: View {
                     }
                     .padding(.top, 16)
                 }
+                
                 .background(pageBG)
+                
                 .onChange(of: viewModel.messages.count) { _ in
                     // scroll to last message
                     if let last = viewModel.messages.last {
@@ -115,8 +119,9 @@ struct ChatView: View {
                     }
                 }
             }
-
-            // MARK: - Input bar
+        }
+        // Đặt input bar trong safeAreaInset(edge: .bottom) để tự tránh bàn phím
+        .safeAreaInset(edge: .bottom) {
             HStack(spacing: 8) {
                 TextField("Type your question here…", text: $inputText, axis: .vertical)
                     .textFieldStyle(.plain)
@@ -149,10 +154,9 @@ struct ChatView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(pageBG)
+            .background(pageBG.ignoresSafeArea(edges: .bottom))
         }
-        // Quan trọng: bỏ ignoresSafeArea(.keyboard) để hệ thống tự đẩy input lên
-        // .ignoresSafeArea(.keyboard, edges: .bottom)
+        // .ignoresSafeArea(.keyboard, edges: .bottom) // removed
     }
 }
 
@@ -190,13 +194,13 @@ private let assistantGradient = LinearGradient(
 struct ChatBubble: View {
     let message: ChatMessage
     @State private var availableWidth: CGFloat = 0
-
+    
     var body: some View {
         HStack {
             if message.isUser {
                 Spacer()
             }
-
+      
             Text(message.text)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 14)
@@ -211,7 +215,7 @@ struct ChatBubble: View {
                                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                                     .stroke(Color(red: 0.86, green: 0.86, blue: 0.95), lineWidth: 1)
                             )
-                            .shadow(color: .black.opacity(0.24), radius: 1, y: 1)
+                            .shadow(color: .black.opacity(0.05), radius: 1, y: 1)
                     }
                 }
                 .foregroundColor(message.isUser ? .white : Color.primary.opacity(0.85))
