@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct InsightsView: View {
+    @Binding var showTabView: Bool
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         ZStack(alignment: .top){
             BackgroundView()
             VStack{
-                TopBarView()
+                TopBarView(onBack: { dismiss() })
                 ScrollView{
                     VStack(spacing: 24){
                         BannerView(name:"Margaret Chen", days:"Day 1, Hour 1")
@@ -24,9 +27,13 @@ struct InsightsView: View {
                 }
             }
         }
+        .onAppear { showTabView = false }
+        .onDisappear { showTabView = true }
+        // Ẩn thanh điều hướng mặc định để không có mũi tên hệ thống
+        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
 #Preview {
-    InsightsView()
+    InsightsView(showTabView: .constant(true))
 }

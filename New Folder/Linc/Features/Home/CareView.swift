@@ -23,69 +23,88 @@ struct CareView: View {
     // Mark the completion closure as @MainActor to ensure UI-safe mutations.
     var onRequestPopup: ((TaskItem, @MainActor @escaping () -> Void) -> Void)? = nil
 
+    // Binding để điều khiển hiện/ẩn floating Tab Bar ở MainTabView
+    @Binding var showTabView: Bool
+
+    // State điều hướng tới InsightsView
+    @State private var showInsights: Bool = false
+
     enum SectionKind {
         case morning, afternoon, evening
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
-            VStack(spacing: 0) {
-                HeaderView(scrollOffset: 0)
-                    .background(.clear)
+        NavigationStack {
+            ZStack(alignment: .top) {
+                VStack(spacing: 0) {
+                    HeaderView(scrollOffset: 0)
+                        .background(.clear)
 
-                InsightBannerView()
-                    .padding(.top, 8)
-                    .padding(.bottom, 12)
-
-                GeometryReader { proxy in
-                    let availableHeight = proxy.size.height
-
-                    // Container giống TaskGroupView (visual)
-                    VStack(alignment: .leading, spacing: 0) {
-                        ScrollView(.vertical, showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 44) {
-                                // Morning
-                                TaskSectionView(
-                                    title: "Morning",
-                                    tasks: $morningTasks,
-                                    onToggle: { idx in morningTasks[idx].isCompleted.toggle() },
-                                    onCardTap: { idx in openDetail(for: .morning, index: idx) }
-                                )
-                                // Afternoon
-                                TaskSectionView(
-                                    title: "Afternoon",
-                                    tasks: $afternoonTasks,
-                                    onToggle: { idx in afternoonTasks[idx].isCompleted.toggle() },
-                                    onCardTap: { idx in openDetail(for: .afternoon, index: idx) }
-                                )
-                                // Evening
-                                TaskSectionView(
-                                    title: "Evening",
-                                    tasks: $eveningTasks,
-                                    onToggle: { idx in eveningTasks[idx].isCompleted.toggle() },
-                                    onCardTap: { idx in openDetail(for: .evening, index: idx) }
-                                )
-                            }
-                            .padding(.vertical, 20)
-                            .padding(.horizontal, 20)
+                    InsightBannerView()
+                        .padding(.top, 8)
+                        .padding(.bottom, 12)
+                        .onTapGesture {
+                            showInsights = true
                         }
-                        .frame(height: availableHeight)
+
+                    GeometryReader { proxy in
+                        let availableHeight = proxy.size.height
+
+                        // Container giống TaskGroupView (visual)
+                        VStack(alignment: .leading, spacing: 0) {
+                            ScrollView(.vertical, showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 44) {
+                                    // Morning
+                                    TaskSectionView(
+                                        title: "Morning",
+                                        tasks: $morningTasks,
+                                        onToggle: { idx in morningTasks[idx].isCompleted.toggle() },
+                                        onCardTap: { idx in openDetail(for: .morning, index: idx) }
+                                    )
+                                    // Afternoon
+                                    TaskSectionView(
+                                        title: "Afternoon",
+                                        tasks: $afternoonTasks,
+                                        onToggle: { idx in afternoonTasks[idx].isCompleted.toggle() },
+                                        onCardTap: { idx in openDetail(for: .afternoon, index: idx) }
+                                    )
+                                    // Evening
+                                    TaskSectionView(
+                                        title: "Evening",
+                                        tasks: $eveningTasks,
+                                        onToggle: { idx in eveningTasks[idx].isCompleted.toggle() },
+                                        onCardTap: { idx in openDetail(for: .evening, index: idx) }
+                                    )
+                                }
+                                .padding(.vertical, 20)
+                                .padding(.horizontal, 20)
+                            }
+                            .frame(height: availableHeight)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color.primary200, lineWidth: 0.5)
+                        )
+                        .shadow(color: Color.black.opacity(0.12), radius: 8.5, y: 3)
+                        .padding(.top, 8)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
                     }
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.systemBackground))
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.primary200, lineWidth: 0.5)
-                    )
-                    .shadow(color: Color.black.opacity(0.12), radius: 8.5, y: 3)
-                    .padding(.top, 8)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
                 }
+
+                // Điều hướng tới InsightsView và truyền binding showTabView
+                NavigationLink(isActive: $showInsights) {
+                    InsightsView(showTabView: $showTabView)
+                } label: {
+                    EmptyView()
+                }
+                .hidden()
             }
+            .background(BackgroundView())
         }
-        .background(BackgroundView())
     }
 
     // MARK: - Build detail and call top-level popup
@@ -153,6 +172,6 @@ struct CareView: View {
 }
 
 #Preview {
-    CareView()
+    CareView(showTabView: .constant(true))
         .preferredColorScheme(.light)
 }
