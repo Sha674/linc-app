@@ -2,14 +2,20 @@ import SwiftUI
 
 struct CircleImageButton: View {
     let imageName: String
+    var action: (() -> Void)? = nil
 
     var body: some View {
-        ZStack {
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 48, height: 48)
+        Button(action: { action?() }) {
+            ZStack {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 48, height: 48)
+            }
+            .contentShape(Rectangle())
+            .frame(width: 48, height: 48)
         }
+        .buttonStyle(.plain)
         .shadow(color: Color.black.opacity(0.05), radius: 2, y: 1)
     }
 }
@@ -17,6 +23,9 @@ struct CircleImageButton: View {
 struct HeaderView: View {
     var scrollOffset: CGFloat = 0
     private let scrolledThreshold: CGFloat = 0.5
+
+    // Callback khi bấm vào icon message
+    var onMessageTapped: (() -> Void)? = nil
 
     private var isScrolled: Bool {
         scrollOffset > scrolledThreshold
@@ -53,7 +62,7 @@ struct HeaderView: View {
 
                 HStack(spacing: 12) {
                     CircleImageButton(imageName: "notification")
-                    CircleImageButton(imageName: "message")
+                    CircleImageButton(imageName: "message", action: { onMessageTapped?() })
                 }
                 .opacity(Double(max(1 - scrollOffset / 100, 0.8)))
             }
@@ -87,6 +96,6 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
 #Preview {
     ZStack {
         Color(.systemGroupedBackground).ignoresSafeArea()
-        HeaderView(scrollOffset: 0)
+        HeaderView(scrollOffset: 0, onMessageTapped: {})
     }
 }

@@ -2,78 +2,64 @@ import SwiftUI
 
 struct CareView: View {
     @State private var scrollOffset: CGFloat = 0
+    @State private var showingChat: Bool = false
 
     @State private var morningTasks = [
         TaskItem(title: "Check Morning Weight", time: "8:15 AM", note: "Before breakfast", icon: "weight"),
         TaskItem(title: "Administer Medication A", time: "8:30 AM", note: "1 tablet", icon: "medicine"),
         TaskItem(title: "Prepare Low-Salt Breakfast", time: "8:30 AM", note: "Ensure fluid ≤ 250 ml", icon: "cooking")
     ]
-
     @State private var afternoonTasks = [
         TaskItem(title: "Support Light Walk", time: "2:00 PM", note: "15–20 mins", icon: "walk"),
         TaskItem(title: "Check Blood Pressure", time: "3:30 PM", note: "Record in app", icon: "blood"),
     ]
-    
     @State private var eveningTasks = [
         TaskItem(title: "Weigh Before Dinner", time: "6:40 PM", note: "Track daily change", icon: "weight"),
         TaskItem(title: "Administer Evening Medication", time: "8:30 PM", note: "2 tablets", icon: "medicine"),
     ]
 
-    // Lifted popup via callback from parent
-    // Mark the completion closure as @MainActor to ensure UI-safe mutations.
     var onRequestPopup: ((TaskItem, @MainActor @escaping () -> Void) -> Void)? = nil
-
-    // Binding để điều khiển hiện/ẩn floating Tab Bar ở MainTabView
     @Binding var showTabView: Bool
-
-    // State điều hướng tới InsightsView
     @State private var showInsights: Bool = false
 
-    enum SectionKind {
-        case morning, afternoon, evening
-    }
+    enum SectionKind { case morning, afternoon, evening }
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
-                    HeaderView(scrollOffset: 0)
-                        .background(.clear)
+                    HeaderView(scrollOffset: 0, onMessageTapped: {
+                        showingChat = true
+                    })
+                    .background(.clear)
 
                     InsightBannerView()
                         .padding(.top, 8)
                         .padding(.bottom, 12)
-                        .onTapGesture {
-                            showInsights = true
-                        }
+                        .onTapGesture { showInsights = true }
 
                     GeometryReader { proxy in
                         let availableHeight = proxy.size.height
-
-                        // Container giống TaskGroupView (visual)
                         VStack(alignment: .leading, spacing: 0) {
                             ScrollView(.vertical, showsIndicators: false) {
                                 VStack(alignment: .leading, spacing: 44) {
-                                    // Morning
                                     TaskSectionView(
                                         title: "Morning",
                                         tasks: $morningTasks,
                                         onToggle: { idx in morningTasks[idx].isCompleted.toggle() },
-                                        onCardTap: { idx in openDetail(for: .morning, index: idx) }
+                                        onCardTap: { idx in openDetail(for: SectionKind.morning, index: idx) }
                                     )
-                                    // Afternoon
                                     TaskSectionView(
                                         title: "Afternoon",
                                         tasks: $afternoonTasks,
                                         onToggle: { idx in afternoonTasks[idx].isCompleted.toggle() },
-                                        onCardTap: { idx in openDetail(for: .afternoon, index: idx) }
+                                        onCardTap: { idx in openDetail(for: SectionKind.afternoon, index: idx) }
                                     )
-                                    // Evening
                                     TaskSectionView(
                                         title: "Evening",
                                         tasks: $eveningTasks,
                                         onToggle: { idx in eveningTasks[idx].isCompleted.toggle() },
-                                        onCardTap: { idx in openDetail(for: .evening, index: idx) }
+                                        onCardTap: { idx in openDetail(for: SectionKind.evening, index: idx) }
                                     )
                                 }
                                 .padding(.vertical, 20)
@@ -95,57 +81,67 @@ struct CareView: View {
                     }
                 }
 
-                // Điều hướng tới InsightsView và truyền binding showTabView
                 NavigationLink(isActive: $showInsights) {
                     InsightsView(showTabView: $showTabView)
-                } label: {
-                    EmptyView()
-                }
+                } label: { EmptyView() }
                 .hidden()
             }
             .background(BackgroundView())
         }
+        // Present ChatView as bottom sheet
+        .sheet(isPresented: $showingChat) {
+            ChatView()
+                .presentationDetents([.medium, .large]) // iOS 16+
+                .presentationDragIndicator(.visible)
+        }
     }
 
-    // MARK: - Build detail and call top-level popup
+    // MARK: - Navigation / detail handling
     private func openDetail(for section: SectionKind, index: Int) {
-        print("CareView.openDetail called -> section: \(section), index: \(index)")
-
-        let baseTask: TaskItem
+        // Select the correct task by section/index
+        let baseItem: TaskItem
         switch section {
-        case .morning: baseTask = morningTasks[index]
-        case .afternoon: baseTask = afternoonTasks[index]
-        case .evening: baseTask = eveningTasks[index]
+        case .morning:
+            guard morningTasks.indices.contains(index) else { return }
+            baseItem = morningTasks[index]
+        case .afternoon:
+            guard afternoonTasks.indices.contains(index) else { return }
+            baseItem = afternoonTasks[index]
+        case .evening:
+            guard eveningTasks.indices.contains(index) else { return }
+            baseItem = eveningTasks[index]
         }
 
-        let detailTask = enrich(task: baseTask)
-        print("CareView.onRequestPopup will be called with task:", detailTask.title)
+        // Enrich with insight/alert based on title
+        let detailedItem = detailedTask(from: baseItem)
 
-        // Provide a closure to mark done in the correct section (runs on MainActor)
-        let markDone: @MainActor () -> Void = {
+        // Ask MainTabView to present the popup
+        onRequestPopup?(detailedItem) {
+            // When user taps Save in the popup, toggle completion on the correct task
             switch section {
             case .morning:
-                if morningTasks.indices.contains(index) {
-                    morningTasks[index].isCompleted = true
+                guard self.morningTasks.indices.contains(index) else { return }
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    self.morningTasks[index].isCompleted.toggle()
                 }
             case .afternoon:
-                if afternoonTasks.indices.contains(index) {
-                    afternoonTasks[index].isCompleted = true
+                guard self.afternoonTasks.indices.contains(index) else { return }
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    self.afternoonTasks[index].isCompleted.toggle()
                 }
             case .evening:
-                if eveningTasks.indices.contains(index) {
-                    eveningTasks[index].isCompleted = true
+                guard self.eveningTasks.indices.contains(index) else { return }
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    self.eveningTasks[index].isCompleted.toggle()
                 }
             }
         }
-
-        onRequestPopup?(detailTask, markDone)
     }
 
-    // Sinh alert/insight theo loại task
-    private func enrich(task: TaskItem) -> TaskItem {
-        var t = task
-        let title = task.title.lowercased()
+    // MARK: - Detail enrichment
+    private func detailedTask(from item: TaskItem) -> TaskItem {
+        var t = item
+        let title = t.title.lowercased()
 
         if title.contains("weight") || title.contains("weigh") {
             t.insight = "Sudden weight gain can signal fluid retention — one of the earliest signs that heart failure is worsening."
@@ -169,9 +165,4 @@ struct CareView: View {
 
         return t
     }
-}
-
-#Preview {
-    CareView(showTabView: .constant(true))
-        .preferredColorScheme(.light)
 }
