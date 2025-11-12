@@ -22,109 +22,123 @@ struct HandbookHomeView: View {
     private var readCount: Int { totalCount - unreadCount }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: -50) {
-                // Header frame covering both title and tip card
-                ZStack {
-                    BackgroundViewV2() // white background with circles on the right
-
-                    VStack {
-                        // Title split across two lines, both left-aligned
-                        HStack {
-                            Text("Know Better,")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color("gradientStart"),
-                                            Color("gradientEnd")
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .multilineTextAlignment(.leading)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-
-                        HStack {
-                            Text("Care with Confidence.")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color("gradientStart"),
-                                            Color("gradientEnd")
-                                        ]),
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .multilineTextAlignment(.leading)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 20)
+        NavigationStack {
+            
+            
+            ScrollView {
+                VStack(spacing: -50) {
+                    // Header frame covering both title and tip card
+                    ZStack {
+                        BackgroundViewV2() // white background with circles on the right
                         
-                        // Gradient tip card
-                        GradientInfoCard(
-                            title: "All about medicine A",
-                            subtitle: "Skipping doses may cause fatigue or shortness of breath.",
-                            imageName: "medicine2"
-                        )
-                        .padding(.horizontal, 16)
-                    }
-                    .padding(.vertical, 60)
-                }
-                // Apply bottom border and subtle shadow to the entire header block
-                .overlay(alignment: .bottom) {
-                    Rectangle()
-                        .fill(Color.primary100)
-                        .frame(height: 0.5)
-                }
-                .shadow(color: Color.black.opacity(0.04), radius: 8, y: 3)
-
-                // Section + list
-                VStack(spacing: -120) {
-                    // Section Header (matched to TaskHeaderView style) — unread/total
-                    HStack {
-                        Text("Why this care matters?")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(Color(uiColor: .systemGray))
-
-                        Spacer()
-
-                        Text("\(unreadCount)/\(totalCount)")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color.primary700)
-                            .padding(.horizontal, 8)
-                            .frame(height: 26)
-                            .background(Color.primary300)
-                            .cornerRadius(8)
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .padding(.top, -175)
-                    
-                    VStack(spacing: 16) {
-                        ForEach(items.indices, id: \.self) { idx in
-                            KnowledgeRow(item: items[idx]) {
-                                markRead(at: idx)
+                        VStack {
+                            // Title split across two lines, both left-aligned
+                            HStack {
+                                Text("Know Better,")
+                                    .font(.system(size: 32, weight: .bold))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color("gradientStart"),
+                                                Color("gradientEnd")
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .multilineTextAlignment(.leading)
+                                Spacer()
                             }
-                            .padding(.horizontal, 10)
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            
+                            HStack {
+                                Text("Care with Confidence.")
+                                    .font(.system(size: 32, weight: .bold))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color("gradientStart"),
+                                                Color("gradientEnd")
+                                            ]),
+                                            startPoint: .topLeading,
+                                            endPoint: .bottomTrailing
+                                        )
+                                    )
+                                    .multilineTextAlignment(.leading)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 20)
+                            
+                            //Navigate to Medicine View
+                            NavigationLink(destination: MedicineView(
+                                mainTitle: "How medicine “A” supports the heart",
+                                subtitle: "Skipping doses may cause fatigue or shortness of breath.",
+                                goalContent: "The primary goal is to help the heart function more effectively, ease symptoms such as breathlessness or fatigue, and prevent the condition from getting worse."
+                            )) {
+                                // Gradient tip card
+                                GradientInfoCard(
+                                    title: "All about medicine A",
+                                    subtitle: "Skipping doses may cause fatigue or shortness of breath.",
+                                    imageName: "medicine2"
+                                )
+                                .padding(.horizontal, 16)
+                            }
+                            //                        .buttonStyle(.plain)
+                            
+                            
+                        }
+                        .padding(.vertical, 60)
+                    }
+                    // Apply bottom border and subtle shadow to the entire header block
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(Color.primary100)
+                            .frame(height: 0.5)
+                    }
+                    .shadow(color: Color.black.opacity(0.04), radius: 8, y: 3)
+                    
+                    // Section + list
+                    VStack(spacing: -120) {
+                        // Section Header (matched to TaskHeaderView style) — unread/total
+                        HStack {
+                            Text("Why this care matters?")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundStyle(Color(uiColor: .systemGray))
+                            
+                            Spacer()
+                            
+                            Text("\(unreadCount)/\(totalCount)")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(Color.primary700)
+                                .padding(.horizontal, 8)
+                                .frame(height: 26)
+                                .background(Color.primary300)
+                                .cornerRadius(8)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
+                        .padding(.top, -175)
+                        
+                        VStack(spacing: 16) {
+                            ForEach(items.indices, id: \.self) { idx in
+                                KnowledgeRow(item: items[idx]) {
+                                    markRead(at: idx)
+                                }
+                                .padding(.horizontal, 10)
+                            }
                         }
                     }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 200)
+                    .background(Color(.systemGroupedBackground))
+                    .padding(.top, 10)
                 }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 200)
-                .background(Color(.systemGroupedBackground))
-                .padding(.top, 10)
             }
+            .scrollIndicators(.hidden) // Ẩn thanh scroll indicator
+            .ignoresSafeArea()
         }
-        .scrollIndicators(.hidden) // Ẩn thanh scroll indicator
-        .ignoresSafeArea()
     }
     
     private func markRead(at index: Int) {

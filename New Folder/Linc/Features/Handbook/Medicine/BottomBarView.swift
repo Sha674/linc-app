@@ -8,16 +8,15 @@
 import SwiftUI
 
 struct BottomBarView: View {
-    // Optional callbacks for actions
-    var onLearnMore: (() -> Void)?
     var onConfirm: (() -> Void)?
+    @State private var showSafari = false
 
     var body: some View {
         HStack() {
             Button(action: {
-                onLearnMore?()
+                showSafari=true
             }) {
-                Link("Find out more", destination: URL(string: "https://www.apple.com")!)
+                Text("Find out more")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.black)
                     .frame(width: 150, height: 30)
@@ -40,6 +39,8 @@ struct BottomBarView: View {
         }
         .padding()
         .background(Color.primary50)
+        .sheet(isPresented: $showSafari) {
+            SafariView(url: URL(string: "https://www.google.com")!)}
     }
 }
 

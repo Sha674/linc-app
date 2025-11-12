@@ -77,9 +77,6 @@ struct MedicineView: View {
                     .padding(.bottom, 100)
                 }
                 BottomBarView(
-                    onLearnMore: {
-                        // optional: handle learn more
-                    },
                     onConfirm: {
                         onConfirm?()
                         dismiss()
@@ -89,19 +86,19 @@ struct MedicineView: View {
                 
             }
             .ignoresSafeArea()
-            VStack {
-                HStack {
-                    Button(action: {onConfirm?()}) {
-                        Image(systemName: "xmark")
-                            .foregroundStyle(Color.primary700)
-                            .font(.largeTitle.bold())
-                    }
-                    .padding(.horizontal,20)
-                    .padding(.top,10)
-                    Spacer()
-                }
-                Spacer()
-            }
+//            VStack {
+//                HStack {
+//                    Button(action: {onConfirm?()}) {
+//                        Image(systemName: "xmark")
+//                            .foregroundStyle(Color.primary700)
+//                            .font(.largeTitle.bold())
+//                    }
+//                    .padding(.horizontal,20)
+//                    .padding(.top,10)
+//                    Spacer()
+//                }
+//                Spacer()
+//            }
         }
     }
 }
