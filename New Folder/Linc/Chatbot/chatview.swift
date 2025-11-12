@@ -215,7 +215,7 @@ struct ChatBubble: View {
                                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                                     .stroke(Color(red: 0.86, green: 0.86, blue: 0.95), lineWidth: 1)
                             )
-                            .shadow(color: .black.opacity(0.24), radius: 1, y: 1)
+                            .shadow(color: .black.opacity(0.05), radius: 1, y: 1)
                     }
                 }
                 .foregroundColor(message.isUser ? .white : Color.primary.opacity(0.85))
