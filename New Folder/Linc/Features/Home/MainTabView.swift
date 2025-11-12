@@ -124,8 +124,8 @@ struct MainTabView: View {
             // MARK: - Top-level Popup Overlay (covers everything)
             if showingDetail, let task = popupTask {
                 ZStack {
-                    // Dim background
-                    Color.black.opacity(0.7)
+                    // Darker overlay color on top of blur
+                    Color.black.opacity(0.80)
                         .ignoresSafeArea()
                         .transition(.opacity)
 
@@ -155,6 +155,8 @@ struct MainTabView: View {
                             popupOnSave = nil
                         }
                     )
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)     
                     .transition(
                         .asymmetric(
                             insertion: .opacity.combined(with: .scale(scale: 0.96)),

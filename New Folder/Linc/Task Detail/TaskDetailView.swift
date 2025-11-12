@@ -18,7 +18,7 @@ struct TaskDetailView: View {
             VStack(spacing: 0) {
                 TaskDetailContentView(task: task)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
+                    .padding(.vertical, 16)
                     .background(Color.primary100)
 
                 // Conditional input or save button
@@ -52,7 +52,7 @@ struct TaskDetailView: View {
                 }
             }
         }
-        .frame(width: 327)
+        //.frame(width: 327)
         .background(Color.white)
         .cornerRadius(16)
         .overlay(
@@ -60,6 +60,7 @@ struct TaskDetailView: View {
                 .stroke(Color.primary300, lineWidth: 0.5)
         )
         .shadow(color: Color.black.opacity(0.05), radius: 8, y: 4)
+        .padding(.vertical, 16)
     }
 }
 

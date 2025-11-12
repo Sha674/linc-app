@@ -7,7 +7,7 @@ struct TaskDetailHeader: View {
     var body: some View {
         HStack {
             Text(title)
-                .font(.system(size: 16, weight: .bold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(Color.black)
 
             Spacer()

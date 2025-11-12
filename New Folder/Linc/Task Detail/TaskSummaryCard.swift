@@ -46,7 +46,7 @@ struct TaskSummaryCard: View {
         .padding(.vertical, 4)
         .padding(.horizontal, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.primary200.opacity(0.7))
+        .background(Color.primary200.opacity(0.8))
         .cornerRadius(8)
     }
 }
