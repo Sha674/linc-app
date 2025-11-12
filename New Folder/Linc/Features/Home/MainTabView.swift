@@ -167,7 +167,7 @@ struct MainTabView: View {
                                 popupOnSave = nil
                             }
                         )
-                        .padding(.horizontal, 36) // updated from 20 to 36
+                        .padding(.horizontal, 32) // updated from 20 to 36
                         .padding(.bottom, 20)
                         .transition(
                             .asymmetric(
