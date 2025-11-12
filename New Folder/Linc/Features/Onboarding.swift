@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+import SwiftUI
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+    }
+}
 
 
 struct LoginView: View {
@@ -112,6 +122,7 @@ struct LoginPage: View {
                 
                 
                 Button(action: {
+                    hideKeyboard()
                     if (email.lowercased() == "afp@gmail.com") && password == "sebastian" {
                         currentPage = 1
                     } else {
