@@ -9,11 +9,12 @@ import SwiftUI
 import Combine
 
 final class AppState: ObservableObject {
-    enum Auth {
+    enum Auth: Equatable{
         case loggedOut
         case awaitingCode(sessionId: String, who: String)
         case loggedIn
     }
     var name: String = "Linc"
     @Published var auth: Auth = .loggedOut
+    @Published var onboardingCompleted: Bool = false 
 }
