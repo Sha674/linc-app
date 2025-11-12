@@ -9,11 +9,17 @@ import SwiftUI
 
 @main
 struct LincApp: App {
-    @State private var isLoggedIn = false
+    @StateObject private var app = AppState()
     var body: some Scene {
         WindowGroup {
-//            OnboardingView()
-            HandbookHomeView()
+            if app.onboardingCompleted {
+                MainTabView()
+                    .environmentObject(app)
+            } else {
+                OnboardingView()
+                    .environmentObject(app)
+            }
         }
     }
 }
+

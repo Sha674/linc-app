@@ -32,10 +32,17 @@ struct CodeVerifyView: View {
     }
 }
 
+
+
 struct OnboardingView: View {
+    @EnvironmentObject var app: AppState
     @State private var currentPage = 0
 
     var body: some View {
+//        if app.onboardingCompleted{
+//            MainTabView()
+//                .environmentObject(app)
+//        }
         TabView(selection: $currentPage) {
             LoginPage(currentPage: $currentPage)
                 .tag(0)
@@ -222,6 +229,7 @@ struct JustThreeThingsPage: View {
 
 struct WhyThisWorksPage: View {
     @Binding var currentPage: Int
+    @EnvironmentObject var app: AppState
 
     var body: some View {
         VStack(spacing: 16) {
@@ -270,7 +278,7 @@ struct WhyThisWorksPage: View {
             .frame(maxWidth: .infinity)
 
             Button(action: {
-                currentPage = 0
+                app.onboardingCompleted = true
             }) {
                 Text("I'm ready!")
             }
