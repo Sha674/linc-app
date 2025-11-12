@@ -7,6 +7,34 @@
 import SwiftUI
 import Combine
 
+private struct HeaderBackground: View {
+    var body: some View {
+        ZStack {
+            // base
+            Color.white
+
+            // big soft circles in the top-right
+            Circle()
+                .fill(Color(red: 0.95, green: 0.96, blue: 1.40))   // very light lavender
+                .frame(width: 320, height: 320)
+                .offset(x: 160, y: -60)
+
+            Circle()
+                .fill(Color(red: 0.92, green: 0.90, blue: 1.00))   // slightly deeper
+                .frame(width: 220, height: 220)
+                .offset(x: 160, y: -60)
+                .blur(radius: 1.5)
+
+            // optional subtle highlight sweep
+            RadialGradient(
+                colors: [Color.white.opacity(0.7), .clear],
+                center: .topTrailing,
+                startRadius: 0, endRadius: 240
+            )
+        }
+    }
+}
+
 // MARK: - Model types needed by this view
 
 struct chatview: Identifiable, Hashable {
@@ -19,6 +47,7 @@ struct chatview: Identifiable, Hashable {
 // MARK: - View
 
 struct ChatView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = ChatViewModel()
     @State private var inputText: String = ""
 
@@ -38,30 +67,55 @@ struct ChatView: View {
         VStack(spacing: 0) {
 
 // MARK: - Header
-            VStack(alignment: .leading, spacing: 6) {
-                // Gradient title text
-                titleGradient
-                    .mask(
-                        Text("Need clarity? Just ask.")
-                            .font(.system(size: 30, weight: .bold))
-                    )
+            // MARK: - Header
+            VStack(spacing: 0) {
+                // MARK: - Header
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Need clarity? Just ask.")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(titleGradient)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                Text("I can help you understand symptoms, daily tasks,\nor when to contact your doctor.")
-                    .padding(.bottom, 12)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    
-                
+                    Text("I can help you understand symptoms, daily tasks,\nor when to contact your doctor.")
+                        .padding(.bottom, 15)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, -40)                       // small breathing room
+                .background(HeaderBackground())
+
+
+                Divider()
+                    .frame(height: 2)
+                    .background(Color(.systemGray3))
+                    .padding(.horizontal, -24)
+
+                // ... messages + input bar ...
             }
-            .padding(.horizontal, 40)                 // less side padding
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: 120, alignment: .bottom)
-            .background(Color.white)
+            .safeAreaInset(edge: .top) {
+                HStack {
+                    Spacer()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 27, weight: .semibold))
+                            .foregroundStyle(titleGradient)
+                            .padding(14)
+                            .background(
+                                Circle()
+                                    .fill(Color.white.opacity(0.9))
+                                    .frame(width: 44, height: 44)
+                                    .shadow(color: .black.opacity(0.38), radius: 3, y: 1)
+                            )
+                    }
+                }
+                .padding(.trailing, 11)
+                .padding(.top, 6)
+                .padding(.bottom, 12)
+            }
 
-            Divider()
-                .frame(height: 2)
-                .background(Color(.systemGray3))
-                .padding(.horizontal, -24)
 
 // MARK: - Messages list
             ScrollViewReader { proxy in
@@ -76,7 +130,7 @@ struct ChatView: View {
                     .padding(.top, 16)
                 }
                 
-                .background(Color(.systemGroupedBackground))
+                .background(pageBG)
                 
                 .onChange(of: viewModel.messages.count) { _ in
                     
@@ -107,7 +161,7 @@ struct ChatView: View {
                 } label: {
                     Image(systemName: "paperplane.fill")
                         .foregroundColor(.white)
-                        .padding(10)
+                        .padding(15)
                         .background(
                             LinearGradient(
                                 colors: [
@@ -124,7 +178,8 @@ struct ChatView: View {
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(Color(.systemGroupedBackground))
+            .background(pageBG)
+
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
@@ -140,36 +195,60 @@ private struct AvailableWidthKey: PreferenceKey {
 }
 
 // MARK: - One bubble
+// Page background (very light lavender)
+private let pageBG = Color(red: 0.97, green: 0.97, blue: 1.00)
+
+// User bubble gradient
+private let userGradient = LinearGradient(
+    colors: [
+        Color(red: 0.33, green: 0.37, blue: 0.97),
+        Color(red: 0.55, green: 0.32, blue: 0.99)
+    ],
+    startPoint: .leading, endPoint: .trailing
+)
+
+// Assistant bubble fill (soft lavender)
+private let assistantGradient = LinearGradient(
+    colors: [
+        Color(red: 0.93, green: 0.94, blue: 1.00),
+        Color(red: 0.96, green: 0.95, blue: 1.00)
+    ],
+    startPoint: .topLeading, endPoint: .bottomTrailing
+)
 
 struct ChatBubble: View {
     let message: ChatMessage
     @State private var availableWidth: CGFloat = 0
+    
 
     var body: some View {
         HStack {
             if message.isUser {
                 Spacer()
             }
+      
             Text(message.text)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 14)
-                .background(
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(red: 0.33, green: 0.37, blue: 0.97),
-                            Color(red: 0.55, green: 0.32, blue: 0.99)
-                        ]),
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .background {
+                    if message.isUser {
+                        userGradient
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    } else {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(assistantGradient) // lighter lavender
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .stroke(Color(red: 0.86, green: 0.86, blue: 0.95), lineWidth: 1)
+                            )
+                            .shadow(color: .black.opacity(0.24), radius: 1, y: 1)
+                    }
+                }
+                .foregroundColor(message.isUser ? .white : Color.primary.opacity(0.85))
                 .frame(
                     maxWidth: availableWidth > 0 ? availableWidth * 0.7 : .infinity,
                     alignment: message.isUser ? .trailing : .leading
                 )
-            
 
             if !message.isUser {
                 Spacer()
