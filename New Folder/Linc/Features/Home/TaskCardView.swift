@@ -2,11 +2,15 @@ import SwiftUI
 
 struct TaskCardView: View {
     @Binding var task: TaskItem
+    var onToggle: (() -> Void)?
+    var onCardTap: (() -> Void)?
 
     var body: some View {
         HStack(spacing: 16) {
             // Checkbox
-            Button(action: { task.isCompleted.toggle() }) {
+            Button(action: {
+                onToggle?()
+            }) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color(.systemGray6))
@@ -63,6 +67,10 @@ struct TaskCardView: View {
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 16)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onCardTap?()
+        }
     }
 }
 
@@ -70,9 +78,13 @@ private struct TaskCardView_PreviewWrapper: View {
     @State private var example = TaskItem(title: "Check Morning Weight", time: "8:15 AM", note: "Before breakfast", icon: "weight")
 
     var body: some View {
-        TaskCardView(task: $example)
-            .padding()
-            .background(Color(.systemGroupedBackground))
+        TaskCardView(
+            task: $example,
+            onToggle: { example.isCompleted.toggle() },
+            onCardTap: {}
+        )
+        .padding()
+        .background(Color(.systemGroupedBackground))
     }
 }
 

@@ -4,6 +4,11 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .home
     @State private var barHeight: CGFloat = 0 // measure floating bar height
     
+    // Popup state lifted to top-level to cover navbar/tab bar
+    @State private var showingDetail: Bool = false
+    @State private var popupTask: TaskItem?
+    @State private var popupOnSave: (() -> Void)?
+
     enum Tab {
         case home
         case handbook
@@ -15,7 +20,16 @@ struct MainTabView: View {
             Group {
                 switch selectedTab {
                 case .home:
-                    CareView()
+                    CareView(
+                        onRequestPopup: { task, onSave in
+                            // Build content for popup at top level
+                            self.popupTask = task
+                            self.popupOnSave = onSave
+                            withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
+                                self.showingDetail = true
+                            }
+                        }
+                    )
                 case .handbook:
                     HandbookHomeView()
                 }
@@ -106,6 +120,51 @@ struct MainTabView: View {
                         }
                 }
             )
+
+            // MARK: - Top-level Popup Overlay (covers everything)
+            if showingDetail, let task = popupTask {
+                ZStack {
+                    // Dim background
+                    Color.black.opacity(0.7)
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+
+                    // Popup content
+                    TaskDetailView(
+                        task: task,
+                        isPresented: Binding(
+                            get: { showingDetail },
+                            set: { newValue in
+                                withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
+                                    showingDetail = newValue
+                                }
+                                if newValue == false {
+                                    // clear when dismissed
+                                    popupTask = nil
+                                    popupOnSave = nil
+                                }
+                            }
+                        ),
+                        onSave: {
+                            // Propagate to caller (CareView) to mark done
+                            popupOnSave?()
+                            withAnimation(.spring(response: 0.28, dampingFraction: 0.9)) {
+                                showingDetail = false
+                            }
+                            popupTask = nil
+                            popupOnSave = nil
+                        }
+                    )
+                    .transition(
+                        .asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.96)),
+                            removal: .opacity.combined(with: .scale(scale: 0.96))
+                        )
+                    )
+                }
+                // Prevent touches to content below
+                .allowsHitTesting(true)
+            }
         }
         .animation(.easeInOut(duration: 0.25), value: selectedTab)
     }

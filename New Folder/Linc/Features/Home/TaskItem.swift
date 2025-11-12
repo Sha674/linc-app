@@ -7,4 +7,6 @@ struct TaskItem: Identifiable {
     let note: String
     let icon: String
     var isCompleted: Bool = false
+    var alert: String? = nil
+    var insight: String? = nil
 }
