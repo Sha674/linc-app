@@ -201,14 +201,12 @@ struct HandbookHomeView: View {
     }
 
     private func markRead(byID id: HandbookRow.ID) {
-        if let idx = rows.firstIndex(where: { $0.id == id }) {
-            if rows[idx].item.state == .unread {
-                rows[idx].item.state = .read
-            } else {
-                rows[idx].item.state = .unread
-            }
+        rows = rows.map { row in
+            guard row.id == id else { return row }
+            var updated = row
+            updated.item.state = (row.item.state == .unread) ? .read : .unread
+            return updated
         }
-        // Pop back to HandbookHomeView
         selectedRowID = nil
     }
 }
