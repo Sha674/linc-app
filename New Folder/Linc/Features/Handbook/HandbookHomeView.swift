@@ -1,21 +1,22 @@
 import SwiftUI
 
-struct HandbookHomeView: View {
-    // Row model to pair visible info + the content to open
-    struct HandbookRow: Identifiable, Hashable {
-        let id = UUID()
-        var item: KnowledgeItem
-        var content: ContentData?
 
-        static func == (lhs: HandbookRow, rhs: HandbookRow) -> Bool {
-            lhs.id == rhs.id
-        }
+// Row model to pair visible info + the content to open
+struct HandbookRow: Identifiable, Hashable {
+    let id = UUID()
+    var item: KnowledgeItem
+    var content: ContentData?
 
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-        }
+    static func == (lhs: HandbookRow, rhs: HandbookRow) -> Bool {
+        lhs.id == rhs.id
     }
 
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+struct HandbookHomeView: View {
     @State private var rows: [HandbookRow] = [
         .init(
             item: KnowledgeItem(
@@ -39,7 +40,7 @@ struct HandbookHomeView: View {
             item: KnowledgeItem(
                 title: "Daily Monitoring",
                 excerpt: "Catch early signs of fluid build-up.",
-                state: .read,
+                state: .unread,
                 symbol: "stethoscope"
             ),
             content: ContentSamples.dailyMonitoring
