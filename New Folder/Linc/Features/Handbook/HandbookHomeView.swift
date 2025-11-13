@@ -203,6 +203,8 @@ struct HandbookHomeView: View {
         if let idx = rows.firstIndex(where: { $0.id == id }) {
             if rows[idx].item.state == .unread {
                 rows[idx].item.state = .read
+            } else {
+                rows[idx].item.state = .unread
             }
         }
         // Pop back to HandbookHomeView
